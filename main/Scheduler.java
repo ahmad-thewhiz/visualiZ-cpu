@@ -1,4 +1,4 @@
-public class Schedular {
+public class Scheduler {
     public boolean isEmpty();
     public Node peek();
     public void enqueue(Job job);
