@@ -1,4 +1,4 @@
-public class Scheduler {
+public interface Scheduler {
     public boolean isEmpty();
     public Node peek();
     public void enqueue(Job job);
