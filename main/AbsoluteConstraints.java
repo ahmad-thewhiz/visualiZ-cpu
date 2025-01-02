@@ -2,7 +2,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 
 
-public class AbsoluteConstraints {
+public class AbsoluteConstraints implements java.io.Serializable  {
         static final long serialVersionUID=5261460716622152494L;
 
         public int x, y, width=-1, height=-1;
@@ -25,7 +25,7 @@ public class AbsoluteConstraints {
 
             if(size!=null) {
                 this.width=size.width;
-                this.height=size.width;
+                this.height=size.height;
             }
         }
 

@@ -2,11 +2,11 @@ import java.io.*;
 import javax.swing.JOptionPane;
 
 public class PriorityPolicy implements Scheduler{
-    File sourcFile;
+    File sourceFile;
     Node head, tail;
 
     PriorityPolicy(File sourceFile) {
-        this.sourcFile=sourceFile;
+        this.sourceFile=sourceFile;
         head=tail=null;
     }
 
@@ -39,7 +39,7 @@ public class PriorityPolicy implements Scheduler{
 
     public void allocateCPU(Job job){
         try{
-            BufferedReader bufReader=new BufferedReader(new FileReader((sourcFile)));
+            BufferedReader bufReader=new BufferedReader(new FileReader(sourceFile));
             String str=new String();
             
             while((str=bufReader.readLine())!=null);

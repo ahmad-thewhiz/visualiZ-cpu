@@ -1,7 +1,7 @@
 import java.io.*;
 import javax.swing.JOptionPane;
 
-public class FCFSPolicy {
+public class FCFSPolicy implements Scheduler {
     File sourceFile;
     Node head, tail;
 

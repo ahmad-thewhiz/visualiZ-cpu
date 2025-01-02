@@ -4,7 +4,7 @@ import java.io.FileReader;
 import javax.swing.JOptionPane;
 
 
-public class Stack implements Scheduler {
+class Stack implements Scheduler {
     private Node top;
     File sourceFile;
 
@@ -13,8 +13,8 @@ public class Stack implements Scheduler {
     }
 
 
-    Stack(File sourFile) {
-        this.sourceFile=sourFile;
+    Stack(File sourceFile) {
+        this.sourceFile=sourceFile;
         top=null;
     }
 

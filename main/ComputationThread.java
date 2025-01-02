@@ -55,7 +55,7 @@ public class ComputationThread implements Runnable {
                             textField.setText("");
                             textField.setText(job.processID);
                         }
-                    } catch(Exception ex) {}
+                    } catch(InterruptedException ex) {}
 
                     // decrement the remaining burst time and update the burst time label
                     remainingBurstTime--;

@@ -24,7 +24,7 @@ public class RoundRobinPolicy implements Scheduler{
     public void enqueue(Job job) {
         Node newNode=new Node(job);
         if(isEmpty()) 
-            head=tail=null;
+            head=tail=newNode;
         else {
             tail.next=newNode;
             tail=tail.next;
