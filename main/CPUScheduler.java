@@ -28,11 +28,9 @@ public class CPUScheduler extends Thread {
     
     public void run() {    
         if(CalcSimulation.algo.equals("FCFS")) {
-            Job arrivedJob;
             
             for(int i = 0; i < jobBatch.length; i++) {
-                arrivedJob = jobBatch[i];
-                policy.enqueue(arrivedJob);
+                policy.enqueue(jobBatch[i]);
             }
             
             int i = 0;
@@ -51,6 +49,9 @@ public class CPUScheduler extends Thread {
                 waitingTimes[i].setText(String.valueOf(durationInS) + "s");
                 myThreads[i] = new ComputationThread(newJob, policy, textArea, textField, pbar, burstTime);
                 myThreads[i].t.start();
+                try {
+                    myThreads[i].t.join();
+                } catch(Exception e) {}
                 i++;
            }
         } else if(CalcSimulation.algo.equals("Round Robin")) {
