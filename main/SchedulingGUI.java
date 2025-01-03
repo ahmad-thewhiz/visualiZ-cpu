@@ -120,7 +120,8 @@ public class SchedulingGUI extends JFrame {
         mainPanel.add(maxProcessesLabel);
     
         generateButton.setText("Generate Input Fields");
-        generateButton.setBounds(450, 330, 180, 30);
+        generateButton.setBounds(395, 330, 170, 30);
+        generateButton.setFont(new Font("Tahoma", 0, 14));
         generateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 generateInputFields(evt);
@@ -139,10 +140,19 @@ public class SchedulingGUI extends JFrame {
         mainPanel.add(beginButton);
     
         // Initialize inputPanel for dynamic fields
+        Font borderFont = new Font("Tahoma", Font.BOLD, 14);
         inputPanel.setLayout(new GridBagLayout());
         inputPanel.setBackground(new Color(0, 0, 0));
-        inputPanel.setBorder(new TitledBorder(null, "Process Details", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 255, 255)));
-    
+        // inputPanel.setBorder(new TitledBorder(null, "Process Details", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 255, 255)));
+        inputPanel.setBorder(new TitledBorder(
+        BorderFactory.createLineBorder(Color.WHITE),
+        "Process Details", 
+        TitledBorder.LEADING, 
+        TitledBorder.TOP, 
+        borderFont, 
+        Color.WHITE 
+        ));
+
         scrollPane.setBounds(50, 370, 800, 140);
         scrollPane.setViewportView(inputPanel);
         scrollPane.setVisible(false); // Initially hidden
@@ -188,43 +198,58 @@ public class SchedulingGUI extends JFrame {
     }
 
     private void createProcessInputFields(int num) {
+        // Initialize arrays
+        arrivalFields = new JTextField[num];
+        burstFields = new JTextField[num];
+    
         inputPanel.removeAll();
         inputPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5,5,5,5);
+        gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.WEST;
-
+    
         // Headers
         gbc.gridx = 0;
         gbc.gridy = 0;
-        inputPanel.add(new JLabel("Process ID"), gbc);
-
+        JLabel processLabel = new JLabel("Process ID");
+        processLabel.setForeground(Color.WHITE);
+        processLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
+        inputPanel.add(processLabel, gbc);
+    
         gbc.gridx = 1;
-        inputPanel.add(new JLabel("Arrival Time"), gbc);
-
+        JLabel arrivalLabel = new JLabel("Arrival Time");
+        arrivalLabel.setForeground(Color.WHITE);
+        arrivalLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
+        inputPanel.add(arrivalLabel, gbc);
+    
         gbc.gridx = 2;
-        inputPanel.add(new JLabel("Burst Time"), gbc);
-
-        arrivalFields = new JTextField[num];
-        burstFields = new JTextField[num];
-
-        for(int i = 0; i < num; i++) {
+        JLabel burstLabel = new JLabel("Burst Time");
+        burstLabel.setForeground(Color.WHITE);
+        burstLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
+        inputPanel.add(burstLabel, gbc);
+    
+        // Dynamic fields for each process
+        for (int i = 0; i < num; i++) {
             gbc.gridx = 0;
             gbc.gridy = i + 1;
-            inputPanel.add(new JLabel("P" + (i+1)), gbc);
-
+            JLabel processIDLabel = new JLabel("P" + (i + 1));
+            processIDLabel.setForeground(Color.WHITE);
+            processIDLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
+            inputPanel.add(processIDLabel, gbc);
+    
             gbc.gridx = 1;
             arrivalFields[i] = new JTextField(10);
             inputPanel.add(arrivalFields[i], gbc);
-
+    
             gbc.gridx = 2;
             burstFields[i] = new JTextField(10);
             inputPanel.add(burstFields[i], gbc);
         }
-
+    
         inputPanel.revalidate();
         inputPanel.repaint();
     }
+    
 
     private void beginActionPerformed(ActionEvent evt) {
         if(sourcePath.isEmpty()) {
