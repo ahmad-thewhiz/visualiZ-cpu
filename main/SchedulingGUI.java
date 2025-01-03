@@ -1,199 +1,287 @@
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.io.File;
-import java.util.Random;
 
 public class SchedulingGUI extends JFrame {
 
-    private javax.swing.JButton browseButton;
-    private javax.swing.JComboBox<String> comboBox;
-    private javax.swing.JLabel processLabel;
-    private javax.swing.JLabel algoLabel;
-    private javax.swing.JLabel mainTitle;
-    private javax.swing.JLabel subTitle;
-    private javax.swing.JLabel sourceLabel;
-    private javax.swing.JLabel maxProcessesLabel;
-    private javax.swing.JLabel iconLabel;
-    private javax.swing.JPanel mainPanel;
-    private javax.swing.JTextField numSelectedField;
-    private javax.swing.JButton beginButtonLabel;
+    private JButton browseButton;
+    private JComboBox<String> comboBox;
+    private JLabel processLabel;
+    private JLabel algoLabel;
+    private JLabel mainTitle;
+    private JLabel subTitle;
+    private JLabel sourceLabel;
+    private JLabel maxProcessesLabel;
+    private JLabel iconLabel;
+    private JPanel mainPanel;
+    private JTextField numSelectedField;
+    private JButton beginButton;
+    private JButton generateButton;
 
+    private JPanel inputPanel; // Panel to hold dynamic input fields
+    private JScrollPane scrollPane;
 
     private String[] algorithms = {"FCFS", "Round Robin", "Shortest Job First", "Priority Scheduling"};
-    private String sourcePath = new String();
+    private String sourcePath = "";
     public static int NUM_OF_PROCESSES = 0;
-    static String selectedAlgo = new String();
-    
+    static String selectedAlgo = "";
+
+    // Arrays to hold references to dynamically created text fields
+    private JTextField[] arrivalFields;
+    private JTextField[] burstFields;
 
     public SchedulingGUI() {
         initComponents();
-        iconLabel.setIcon(new javax.swing.ImageIcon("src\\background\\dark_pattern.jpg")); 
+        iconLabel.setIcon(new ImageIcon("src\\background\\dark_pattern.jpg")); 
         setResizable(false);
         setTitle("CPU Scheduling Simulator");
         comboBox.setModel(new DefaultComboBoxModel<>(algorithms));
         setLocationRelativeTo(null);
     }
 
-
     @SuppressWarnings("unchecked")
     private void initComponents() {
 
-        mainPanel = new javax.swing.JPanel();
-        processLabel = new javax.swing.JLabel();
-        comboBox = new javax.swing.JComboBox<>();
-        algoLabel = new javax.swing.JLabel();
-        browseButton = new javax.swing.JButton();
-        mainTitle = new javax.swing.JLabel();
-        subTitle = new javax.swing.JLabel();
-        sourceLabel = new javax.swing.JLabel();
-        numSelectedField = new javax.swing.JTextField();
-        beginButtonLabel = new javax.swing.JButton();
-        maxProcessesLabel = new javax.swing.JLabel();
-        iconLabel = new javax.swing.JLabel();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        mainPanel.setBackground(new java.awt.Color(0, 0, 0));
-        mainPanel.setLayout(new AbsoluteLayout());
-        mainPanel.setPreferredSize(new java.awt.Dimension(450, 255));
-
-        processLabel.setFont(new java.awt.Font("Tahoma", 1, 18)); 
-        processLabel.setForeground(new java.awt.Color(255, 255, 255));
-        processLabel.setText("# of Process:");
-        mainPanel.add(processLabel, new AbsoluteConstraints(320, 290, 130, 30));
-
-        comboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        mainPanel.add(comboBox, new AbsoluteConstraints(490, 190, 140, 30));
-
-        algoLabel.setFont(new java.awt.Font("Tahoma", 1, 18)); 
-        algoLabel.setForeground(new java.awt.Color(255, 255, 255));
+        mainPanel = new JPanel();
+        processLabel = new JLabel();
+        comboBox = new JComboBox<>();
+        algoLabel = new JLabel();
+        browseButton = new JButton();
+        mainTitle = new JLabel();
+        subTitle = new JLabel();
+        sourceLabel = new JLabel();
+        numSelectedField = new JTextField();
+        beginButton = new JButton();
+        generateButton = new JButton();
+        maxProcessesLabel = new JLabel();
+        iconLabel = new JLabel();
+        inputPanel = new JPanel();
+        scrollPane = new JScrollPane();
+    
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    
+        mainPanel.setBackground(new Color(0, 0, 0));
+        mainPanel.setLayout(null); // Using null layout for absolute positioning
+        mainPanel.setPreferredSize(new Dimension(960, 600));
+    
+        mainTitle.setFont(new Font("Bookman Old Style", 1, 48)); 
+        mainTitle.setForeground(new Color(255, 255, 255));
+        mainTitle.setText("CPU Scheduling");
+        mainTitle.setBounds(280, 10, 420, 80);
+        mainPanel.add(mainTitle);
+    
+        subTitle.setFont(new Font("Tahoma", 1, 18));
+        subTitle.setForeground(new Color(255, 255, 255));
+        subTitle.setText("Simulator");
+        subTitle.setBounds(420, 70, 130, 40);
+        mainPanel.add(subTitle);
+    
+        algoLabel.setFont(new Font("Tahoma", 1, 18)); 
+        algoLabel.setForeground(new Color(255, 255, 255));
         algoLabel.setText("Algorithm:");
-        mainPanel.add(algoLabel, new AbsoluteConstraints(320, 190, 100, 30));
-
+        algoLabel.setBounds(320, 190, 120, 30);
+        mainPanel.add(algoLabel);
+    
+        comboBox.setModel(new DefaultComboBoxModel<>(algorithms));
+        comboBox.setBounds(450, 190, 140, 30);
+        mainPanel.add(comboBox);
+    
+        sourceLabel.setFont(new Font("Tahoma", 1, 18)); 
+        sourceLabel.setForeground(new Color(255, 255, 255));
+        sourceLabel.setText("Source:");
+        sourceLabel.setBounds(320, 240, 100, 30);
+        mainPanel.add(sourceLabel);
+    
         browseButton.setText("Browse");
-        browseButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        browseButton.setBounds(450, 240, 140, 30);
+        browseButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 browseActionPerformed(evt);
             }
         });
-        mainPanel.add(browseButton, new AbsoluteConstraints(490, 240, 140, 30));
-
-        mainTitle.setFont(new java.awt.Font("Bookman Old Style", 1, 48)); 
-        mainTitle.setForeground(new java.awt.Color(255, 255, 255));
-        mainTitle.setText("CPU Scheduling");
-        mainPanel.add(mainTitle, new AbsoluteConstraints(280, 10, 420, 80));
-
-        subTitle.setFont(new java.awt.Font("Tahoma", 1, 18));
-        subTitle.setForeground(new java.awt.Color(255, 255, 255));
-        subTitle.setText("Simulator");
-        mainPanel.add(subTitle, new AbsoluteConstraints(420, 70, 130, 40));
-
-        sourceLabel.setFont(new java.awt.Font("Tahoma", 1, 18)); 
-        sourceLabel.setForeground(new java.awt.Color(255, 255, 255));
-        sourceLabel.setText("Source:");
-        mainPanel.add(sourceLabel, new AbsoluteConstraints(320, 240, 70, 30));
-
+        mainPanel.add(browseButton);
+    
+        processLabel.setFont(new Font("Tahoma", 1, 18)); 
+        processLabel.setForeground(new Color(255, 255, 255));
+        processLabel.setText("# of Processes:");
+        processLabel.setBounds(320, 290, 160, 30);
+        mainPanel.add(processLabel);
+    
         numSelectedField.setText("0");
-        mainPanel.add(numSelectedField, new AbsoluteConstraints(490, 290, 140, 30));
-
-        beginButtonLabel.setFont(new java.awt.Font("Tahoma", 1, 14)); 
-        beginButtonLabel.setText("Begin");
-        beginButtonLabel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        numSelectedField.setBounds(490, 290, 100, 30);
+        mainPanel.add(numSelectedField);
+    
+        maxProcessesLabel.setFont(new Font("Tahoma", 0, 12)); 
+        maxProcessesLabel.setForeground(new Color(255, 255, 255));
+        maxProcessesLabel.setText("(Max. 10)");
+        maxProcessesLabel.setBounds(600, 290, 80, 30);
+        mainPanel.add(maxProcessesLabel);
+    
+        generateButton.setText("Generate Input Fields");
+        generateButton.setBounds(450, 330, 180, 30);
+        generateButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                generateInputFields(evt);
+            }
+        });
+        mainPanel.add(generateButton);
+    
+        beginButton.setFont(new Font("Tahoma", 1, 14)); 
+        beginButton.setText("Begin");
+        beginButton.setBounds(410, 520, 130, 40); // Lowered position to avoid overlap
+        beginButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 beginActionPerformed(evt);
             }
         });
-        mainPanel.add(beginButtonLabel, new AbsoluteConstraints(410, 370, 130, 40));
-
-        maxProcessesLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); 
-        maxProcessesLabel.setForeground(new java.awt.Color(255, 255, 255));
-        maxProcessesLabel.setText("(Max. 10)");
-        mainPanel.add(maxProcessesLabel, new AbsoluteConstraints(650, 290, 120, 30));
-
-        iconLabel.setIcon(new javax.swing.ImageIcon("D:\\java\\proj\\visualiZ-cpu\\main\\src\\background\\dark_half.jpg")); 
-        mainPanel.add(iconLabel, new AbsoluteConstraints(0, 0, 960, 530));
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 957, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 533, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-
-        mainPanel.getAccessibleContext().setAccessibleName("");
-
+        mainPanel.add(beginButton);
+    
+        // Initialize inputPanel for dynamic fields
+        inputPanel.setLayout(new GridBagLayout());
+        inputPanel.setBackground(new Color(0, 0, 0));
+        inputPanel.setBorder(new TitledBorder(null, "Process Details", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 255, 255)));
+    
+        scrollPane.setBounds(50, 370, 800, 140);
+        scrollPane.setViewportView(inputPanel);
+        scrollPane.setVisible(false); // Initially hidden
+        mainPanel.add(scrollPane);
+    
+        iconLabel.setIcon(new ImageIcon("D:\\java\\proj\\visualiZ-cpu\\main\\src\\background\\dark_half.jpg")); 
+        iconLabel.setBounds(0, 0, 960, 600);
+        mainPanel.add(iconLabel);
+    
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(mainPanel, BorderLayout.CENTER);
+    
         pack();
         setLocationRelativeTo(null);
     }
+    
 
-
-    private void browseActionPerformed(java.awt.event.ActionEvent evt) {
+    private void browseActionPerformed(ActionEvent evt) {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.showOpenDialog(null);
-        File file = fileChooser.getSelectedFile();
-        sourcePath = file.getAbsolutePath();
-    }
-
-
-    private void beginActionPerformed(java.awt.event.ActionEvent evt) {
-        int numOfProcesses = Integer.parseInt(numSelectedField.getText());
-
-        if(sourcePath.isEmpty())
-            JOptionPane.showMessageDialog(null, "ERROR: Please input the source of computation");
-        
-        else if(numOfProcesses <= 0)
-            JOptionPane.showMessageDialog(null, "ERROR: Please input the appropriate number of processes");
-        
-        else {
-            selectedAlgo = comboBox.getSelectedItem().toString();
-            NUM_OF_PROCESSES = Integer.parseInt(numSelectedField.getText());
-            
-            Job[] jobs = new Job[NUM_OF_PROCESSES];
-            for(int i = 1; i <= NUM_OF_PROCESSES; i++) {
-                String processID = "P"+i;
-                long arrivalTime = (new java.util.Random().nextInt(9) + 1) * 300;
-                long burstTime = (new java.util.Random().nextInt(3) + 1) * 100;
-                long STRTTIME = System.nanoTime();
-                
-                Job newJob = new Job(processID, arrivalTime, burstTime, STRTTIME);
-                jobs[(i-1)] = newJob;
-            }
-            
-            CalcSimulation sim = new CalcSimulation(jobs, NUM_OF_PROCESSES, sourcePath, selectedAlgo);
-            
-            sim.start();
-            this.dispose();
+        int result = fileChooser.showOpenDialog(this);
+        if(result == JFileChooser.APPROVE_OPTION){
+            File file = fileChooser.getSelectedFile();
+            sourcePath = file.getAbsolutePath();
         }
     }
 
+    private void generateInputFields(ActionEvent evt) {
+        String numStr = numSelectedField.getText();
+        try {
+            int num = Integer.parseInt(numStr);
+            if(num <= 0 || num > 10){
+                JOptionPane.showMessageDialog(this, "Please enter a number between 1 and 10 for processes.");
+                return;
+            }
+            NUM_OF_PROCESSES = num;
+            createProcessInputFields(num);
+            scrollPane.setVisible(true);
+            mainPanel.revalidate();
+            mainPanel.repaint();
+        } catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(this, "Please enter a valid number for processes.");
+        }
+    }
+
+    private void createProcessInputFields(int num) {
+        inputPanel.removeAll();
+        inputPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5,5,5,5);
+        gbc.anchor = GridBagConstraints.WEST;
+
+        // Headers
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        inputPanel.add(new JLabel("Process ID"), gbc);
+
+        gbc.gridx = 1;
+        inputPanel.add(new JLabel("Arrival Time"), gbc);
+
+        gbc.gridx = 2;
+        inputPanel.add(new JLabel("Burst Time"), gbc);
+
+        arrivalFields = new JTextField[num];
+        burstFields = new JTextField[num];
+
+        for(int i = 0; i < num; i++) {
+            gbc.gridx = 0;
+            gbc.gridy = i + 1;
+            inputPanel.add(new JLabel("P" + (i+1)), gbc);
+
+            gbc.gridx = 1;
+            arrivalFields[i] = new JTextField(10);
+            inputPanel.add(arrivalFields[i], gbc);
+
+            gbc.gridx = 2;
+            burstFields[i] = new JTextField(10);
+            inputPanel.add(burstFields[i], gbc);
+        }
+
+        inputPanel.revalidate();
+        inputPanel.repaint();
+    }
+
+    private void beginActionPerformed(ActionEvent evt) {
+        if(sourcePath.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "ERROR: Please input the source of computation");
+            return;
+        }
+
+        if(NUM_OF_PROCESSES <= 0) {
+            JOptionPane.showMessageDialog(this, "ERROR: Please input the appropriate number of processes");
+            return;
+        }
+
+        // Validate and collect arrival and burst times
+        Job[] jobs = new Job[NUM_OF_PROCESSES];
+        for(int i = 0; i < NUM_OF_PROCESSES; i++) {
+            String processID = "P" + (i + 1);
+            String arrivalStr = arrivalFields[i].getText();
+            String burstStr = burstFields[i].getText();
+
+            try {
+                long arrivalTime = Long.parseLong(arrivalStr);
+                long burstTime = Long.parseLong(burstStr);
+
+                if(arrivalTime < 0 || burstTime <= 0){
+                    JOptionPane.showMessageDialog(this, "Arrival time must be >= 0 and Burst time must be > 0 for " + processID);
+                    return;
+                }
+
+                long STRTTIME = System.nanoTime();
+                jobs[i] = new Job(processID, arrivalTime, burstTime, STRTTIME);
+
+            } catch (NumberFormatException e){
+                JOptionPane.showMessageDialog(this, "Please enter valid numerical values for arrival and burst times for " + processID);
+                return;
+            }
+        }
+
+        selectedAlgo = comboBox.getSelectedItem().toString();
+
+        CalcSimulation sim = new CalcSimulation(jobs, NUM_OF_PROCESSES, sourcePath, selectedAlgo);
+
+        sim.start();
+        this.dispose();
+    }
 
     public static void main(String args[]) {
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SchedulingGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SchedulingGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SchedulingGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (Exception ex) {
             java.util.logging.Logger.getLogger(SchedulingGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new SchedulingGUI().setVisible(true);
             }
