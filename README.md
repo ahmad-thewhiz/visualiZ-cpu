@@ -1,4 +1,4 @@
-### cpu scheduling scheduler
+### cpu scheduling simulator
 
 algorithms available:
 1. FCFS
